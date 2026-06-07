@@ -1,0 +1,21 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Expo / example app
+.expo/
+example/.expo/
+example/dist/
+example/android/
+example/ios/
+example/web-build/
+expo-env.d.ts
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store

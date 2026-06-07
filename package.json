@@ -1,0 +1,8 @@
+{
+  "name": "react-native-scroll-mask",
+  "version": "0.1.0",
+  "description": "Fade the edges of any scrollable in React Native based on scroll position.",
+  "type": "module",
+  "author": "carlos-dubon",
+  "license": "MIT"
+}
