@@ -4,6 +4,7 @@ import {
   View,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  type ViewStyle,
 } from 'react-native';
 import Animated, {
   Extrapolation,
@@ -12,7 +13,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import type { ScrollMaskProps } from './types';
+import type { Edge, ScrollMaskProps } from './types';
 
 const DEFAULT_FADE_SIZE = 40;
 const DEFAULT_FADE_DISTANCE = 24;
@@ -66,63 +67,66 @@ export function ScrollMask({
 
       <Animated.View
         pointerEvents="none"
-        style={[styles.top, { height: fadeSize }, topStyle]}
+        style={[edgeLayout('top', fadeSize), topStyle]}
       >
-        <Svg width="100%" height="100%">
-          <Defs>
-            <LinearGradient id="scroll-mask-top" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor={color} stopOpacity={1} />
-              <Stop offset="1" stopColor={color} stopOpacity={0} />
-            </LinearGradient>
-          </Defs>
-          <Rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            fill="url(#scroll-mask-top)"
-          />
-        </Svg>
+        <ScrollFadeGradient id="scroll-mask-top" color={color} edge="top" />
       </Animated.View>
 
       <Animated.View
         pointerEvents="none"
-        style={[styles.bottom, { height: fadeSize }, bottomStyle]}
+        style={[edgeLayout('bottom', fadeSize), bottomStyle]}
       >
-        <Svg width="100%" height="100%">
-          <Defs>
-            <LinearGradient id="scroll-mask-bottom" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor={color} stopOpacity={0} />
-              <Stop offset="1" stopColor={color} stopOpacity={1} />
-            </LinearGradient>
-          </Defs>
-          <Rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            fill="url(#scroll-mask-bottom)"
-          />
-        </Svg>
+        <ScrollFadeGradient
+          id="scroll-mask-bottom"
+          color={color}
+          edge="bottom"
+        />
       </Animated.View>
     </View>
+  );
+}
+
+function edgeLayout(edge: Edge, size: number): ViewStyle {
+  switch (edge) {
+    case 'top':
+      return { position: 'absolute', top: 0, left: 0, right: 0, height: size };
+    case 'bottom':
+      return {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: size,
+      };
+  }
+}
+
+function ScrollFadeGradient({
+  id,
+  color,
+  edge,
+}: {
+  id: string;
+  color: string;
+  edge: Edge;
+}) {
+  const edgeIsStart = edge === 'top';
+
+  return (
+    <Svg width="100%" height="100%">
+      <Defs>
+        <LinearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0" stopColor={color} stopOpacity={edgeIsStart ? 1 : 0} />
+          <Stop offset="1" stopColor={color} stopOpacity={edgeIsStart ? 0 : 1} />
+        </LinearGradient>
+      </Defs>
+      <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} />
+    </Svg>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-  },
-  top: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-  bottom: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
 });
