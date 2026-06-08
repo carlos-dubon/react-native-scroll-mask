@@ -13,7 +13,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import type { Edge, ScrollMaskProps } from './types';
+import type { Edge, ScrollableProps, ScrollMaskProps } from './types';
 
 const DEFAULT_FADE_SIZE = 40;
 const DEFAULT_FADE_DISTANCE = 24;
@@ -43,6 +43,13 @@ export function ScrollMask({
       ? layoutMeasurement.width
       : layoutMeasurement.height;
     contentSize.value = isHorizontal ? size.width : size.height;
+
+    childProps.onScroll?.(event);
+  };
+
+  const handleContentSizeChange = (width: number, height: number) => {
+    contentSize.value = isHorizontal ? width : height;
+    childProps.onContentSizeChange?.(width, height);
   };
 
   const startFadeStyle = useAnimatedStyle(() => ({
@@ -67,7 +74,10 @@ export function ScrollMask({
     };
   });
 
-  const scrollable = cloneElement(children, { onScroll: handleScroll });
+  const scrollable = cloneElement(children, {
+    onScroll: handleScroll,
+    onContentSizeChange: handleContentSizeChange,
+  } as Partial<ScrollableProps>);
 
   const startEdge: Edge = isHorizontal ? 'left' : 'top';
   const endEdge: Edge = isHorizontal ? 'right' : 'bottom';
