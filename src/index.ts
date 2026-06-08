@@ -1,2 +1,2 @@
 export { ScrollMask } from './ScrollMask';
-export type { ScrollMaskProps } from './types';
+export type { ScrollMaskProps } from './ScrollMask';

@@ -1,4 +1,4 @@
-import { cloneElement, useId } from 'react';
+import { cloneElement, useId, type ReactElement } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,10 +13,24 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import type { Edge, ScrollableProps, ScrollMaskProps } from './types';
+type Edge = 'top' | 'bottom' | 'left' | 'right';
 
 const DEFAULT_FADE_SIZE = 40;
 const DEFAULT_FADE_DISTANCE = 24;
+
+type ScrollableProps = {
+  horizontal?: boolean | null;
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  onContentSizeChange?: (width: number, height: number) => void;
+};
+
+export type ScrollMaskProps = {
+  children: ReactElement<ScrollableProps>;
+  color: string;
+  horizontal?: boolean;
+  fadeSize?: number;
+  fadeDistance?: number;
+};
 
 export function ScrollMask({
   children,
