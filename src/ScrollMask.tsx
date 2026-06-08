@@ -21,9 +21,13 @@ const DEFAULT_FADE_DISTANCE = 24;
 export function ScrollMask({
   children,
   color,
+  horizontal,
   fadeSize = DEFAULT_FADE_SIZE,
   fadeDistance = DEFAULT_FADE_DISTANCE,
 }: ScrollMaskProps) {
+  const childProps = children.props;
+  const isHorizontal = horizontal ?? childProps.horizontal ?? false;
+
   const offset = useSharedValue(0);
   const viewportSize = useSharedValue(0);
   const contentSize = useSharedValue(0);
@@ -32,12 +36,14 @@ export function ScrollMask({
     const { contentOffset, layoutMeasurement, contentSize: size } =
       event.nativeEvent;
 
-    offset.value = contentOffset.y;
-    viewportSize.value = layoutMeasurement.height;
-    contentSize.value = size.height;
+    offset.value = isHorizontal ? contentOffset.x : contentOffset.y;
+    viewportSize.value = isHorizontal
+      ? layoutMeasurement.width
+      : layoutMeasurement.height;
+    contentSize.value = isHorizontal ? size.width : size.height;
   };
 
-  const topStyle = useAnimatedStyle(() => ({
+  const startFadeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
       offset.value,
       [0, fadeDistance],
@@ -46,7 +52,7 @@ export function ScrollMask({
     ),
   }));
 
-  const bottomStyle = useAnimatedStyle(() => {
+  const endFadeStyle = useAnimatedStyle(() => {
     const distanceToEnd = contentSize.value - viewportSize.value - offset.value;
 
     return {
@@ -61,26 +67,29 @@ export function ScrollMask({
 
   const scrollable = cloneElement(children, { onScroll: handleScroll });
 
+  const startEdge: Edge = isHorizontal ? 'left' : 'top';
+  const endEdge: Edge = isHorizontal ? 'right' : 'bottom';
+
   return (
     <View style={styles.container}>
       {scrollable}
 
       <Animated.View
         pointerEvents="none"
-        style={[edgeLayout('top', fadeSize), topStyle]}
+        style={[edgeLayout(startEdge, fadeSize), startFadeStyle]}
       >
-        <ScrollFadeGradient id="scroll-mask-top" color={color} edge="top" />
+        <ScrollFadeGradient
+          id="scroll-mask-start"
+          color={color}
+          edge={startEdge}
+        />
       </Animated.View>
 
       <Animated.View
         pointerEvents="none"
-        style={[edgeLayout('bottom', fadeSize), bottomStyle]}
+        style={[edgeLayout(endEdge, fadeSize), endFadeStyle]}
       >
-        <ScrollFadeGradient
-          id="scroll-mask-bottom"
-          color={color}
-          edge="bottom"
-        />
+        <ScrollFadeGradient id="scroll-mask-end" color={color} edge={endEdge} />
       </Animated.View>
     </View>
   );
@@ -98,6 +107,10 @@ function edgeLayout(edge: Edge, size: number): ViewStyle {
         right: 0,
         height: size,
       };
+    case 'left':
+      return { position: 'absolute', left: 0, top: 0, bottom: 0, width: size };
+    case 'right':
+      return { position: 'absolute', right: 0, top: 0, bottom: 0, width: size };
   }
 }
 
@@ -110,12 +123,16 @@ function ScrollFadeGradient({
   color: string;
   edge: Edge;
 }) {
-  const edgeIsStart = edge === 'top';
+  const isHorizontal = edge === 'left' || edge === 'right';
+  const axis = isHorizontal
+    ? { x1: '0', y1: '0', x2: '1', y2: '0' }
+    : { x1: '0', y1: '0', x2: '0', y2: '1' };
+  const edgeIsStart = edge === 'top' || edge === 'left';
 
   return (
     <Svg width="100%" height="100%">
       <Defs>
-        <LinearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+        <LinearGradient id={id} {...axis}>
           <Stop offset="0" stopColor={color} stopOpacity={edgeIsStart ? 1 : 0} />
           <Stop offset="1" stopColor={color} stopOpacity={edgeIsStart ? 0 : 1} />
         </LinearGradient>
