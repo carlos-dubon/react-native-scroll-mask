@@ -1,4 +1,4 @@
-import { cloneElement } from 'react';
+import { cloneElement, useId } from 'react';
 import {
   StyleSheet,
   View,
@@ -25,6 +25,8 @@ export function ScrollMask({
   fadeSize = DEFAULT_FADE_SIZE,
   fadeDistance = DEFAULT_FADE_DISTANCE,
 }: ScrollMaskProps) {
+  const gradientId = useId().replace(/:/g, '');
+
   const childProps = children.props;
   const isHorizontal = horizontal ?? childProps.horizontal ?? false;
 
@@ -79,7 +81,7 @@ export function ScrollMask({
         style={[edgeLayout(startEdge, fadeSize), startFadeStyle]}
       >
         <ScrollFadeGradient
-          id="scroll-mask-start"
+          id={`${gradientId}-start`}
           color={color}
           edge={startEdge}
         />
@@ -89,7 +91,11 @@ export function ScrollMask({
         pointerEvents="none"
         style={[edgeLayout(endEdge, fadeSize), endFadeStyle]}
       >
-        <ScrollFadeGradient id="scroll-mask-end" color={color} edge={endEdge} />
+        <ScrollFadeGradient
+          id={`${gradientId}-end`}
+          color={color}
+          edge={endEdge}
+        />
       </Animated.View>
     </View>
   );
