@@ -14,10 +14,15 @@ import Animated, {
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import type { ScrollMaskProps } from './types';
 
-const FADE_SIZE = 40;
-const FADE_DISTANCE = 24;
+const DEFAULT_FADE_SIZE = 40;
+const DEFAULT_FADE_DISTANCE = 24;
 
-export function ScrollMask({ children, color }: ScrollMaskProps) {
+export function ScrollMask({
+  children,
+  color,
+  fadeSize = DEFAULT_FADE_SIZE,
+  fadeDistance = DEFAULT_FADE_DISTANCE,
+}: ScrollMaskProps) {
   const offset = useSharedValue(0);
   const viewportSize = useSharedValue(0);
   const contentSize = useSharedValue(0);
@@ -34,7 +39,7 @@ export function ScrollMask({ children, color }: ScrollMaskProps) {
   const topStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
       offset.value,
-      [0, FADE_DISTANCE],
+      [0, fadeDistance],
       [0, 1],
       Extrapolation.CLAMP,
     ),
@@ -46,7 +51,7 @@ export function ScrollMask({ children, color }: ScrollMaskProps) {
     return {
       opacity: interpolate(
         distanceToEnd,
-        [0, FADE_DISTANCE],
+        [0, fadeDistance],
         [0, 1],
         Extrapolation.CLAMP,
       ),
@@ -59,7 +64,10 @@ export function ScrollMask({ children, color }: ScrollMaskProps) {
     <View style={styles.container}>
       {scrollable}
 
-      <Animated.View pointerEvents="none" style={[styles.top, topStyle]}>
+      <Animated.View
+        pointerEvents="none"
+        style={[styles.top, { height: fadeSize }, topStyle]}
+      >
         <Svg width="100%" height="100%">
           <Defs>
             <LinearGradient id="scroll-mask-top" x1="0" y1="0" x2="0" y2="1">
@@ -77,7 +85,10 @@ export function ScrollMask({ children, color }: ScrollMaskProps) {
         </Svg>
       </Animated.View>
 
-      <Animated.View pointerEvents="none" style={[styles.bottom, bottomStyle]}>
+      <Animated.View
+        pointerEvents="none"
+        style={[styles.bottom, { height: fadeSize }, bottomStyle]}
+      >
         <Svg width="100%" height="100%">
           <Defs>
             <LinearGradient id="scroll-mask-bottom" x1="0" y1="0" x2="0" y2="1">
@@ -107,13 +118,11 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: FADE_SIZE,
   },
   bottom: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: FADE_SIZE,
   },
 });
