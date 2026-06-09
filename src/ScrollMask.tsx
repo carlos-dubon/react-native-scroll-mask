@@ -1,4 +1,4 @@
-import { cloneElement, useId, type ReactElement } from 'react';
+import { cloneElement, useEffect, useId, type ReactElement } from 'react';
 import {
   StyleSheet,
   View,
@@ -30,6 +30,7 @@ export type ScrollMaskProps = {
   horizontal?: boolean;
   fadeSize?: number;
   fadeDistance?: number;
+  resetKey?: unknown;
 };
 
 export function ScrollMask({
@@ -38,6 +39,7 @@ export function ScrollMask({
   horizontal,
   fadeSize = DEFAULT_FADE_SIZE,
   fadeDistance = DEFAULT_FADE_DISTANCE,
+  resetKey,
 }: ScrollMaskProps) {
   const gradientId = useId().replace(/:/g, '');
 
@@ -65,6 +67,10 @@ export function ScrollMask({
     contentSize.value = isHorizontal ? width : height;
     childProps.onContentSizeChange?.(width, height);
   };
+
+  useEffect(() => {
+    offset.value = 0;
+  }, [resetKey, offset]);
 
   const startFadeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
