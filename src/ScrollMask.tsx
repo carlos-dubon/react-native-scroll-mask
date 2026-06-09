@@ -2,8 +2,10 @@ import { cloneElement, useEffect, useId, type ReactElement } from 'react';
 import {
   StyleSheet,
   View,
+  type LayoutChangeEvent,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import Animated, {
@@ -13,6 +15,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
+
 type Edge = 'top' | 'bottom' | 'left' | 'right';
 
 const DEFAULT_FADE_SIZE = 40;
@@ -30,6 +33,7 @@ export type ScrollMaskProps = {
   horizontal?: boolean;
   fadeSize?: number;
   fadeDistance?: number;
+  style?: StyleProp<ViewStyle>;
   resetKey?: unknown;
 };
 
@@ -39,6 +43,7 @@ export function ScrollMask({
   horizontal,
   fadeSize = DEFAULT_FADE_SIZE,
   fadeDistance = DEFAULT_FADE_DISTANCE,
+  style,
   resetKey,
 }: ScrollMaskProps) {
   const gradientId = useId().replace(/:/g, '');
@@ -66,6 +71,11 @@ export function ScrollMask({
   const handleContentSizeChange = (width: number, height: number) => {
     contentSize.value = isHorizontal ? width : height;
     childProps.onContentSizeChange?.(width, height);
+  };
+
+  const handleContainerLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    viewportSize.value = isHorizontal ? width : height;
   };
 
   useEffect(() => {
@@ -103,7 +113,7 @@ export function ScrollMask({
   const endEdge: Edge = isHorizontal ? 'right' : 'bottom';
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]} onLayout={handleContainerLayout}>
       {scrollable}
 
       <Animated.View
