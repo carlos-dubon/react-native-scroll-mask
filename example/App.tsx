@@ -24,6 +24,18 @@ const themes = {
 type Theme = (typeof themes)[keyof typeof themes];
 
 const rows = Array.from({ length: 24 }, (_, i) => `Row ${i + 1}`);
+const tags = [
+  'Reanimated',
+  'SVG',
+  'iOS',
+  'Android',
+  'Expo',
+  'TypeScript',
+  'Scroll',
+  'Mask',
+  'Fade',
+  'Edges',
+];
 
 export default function App() {
   const [isDark, setIsDark] = useState(true);
@@ -51,11 +63,30 @@ export default function App() {
         </View>
       </View>
 
+      <Text style={styles.label}>Vertical</Text>
       <ScrollMask color={theme.background} style={styles.vertical}>
-        <ScrollView>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.verticalContent}
+        >
           {rows.map((row) => (
             <View key={row} style={styles.row}>
               <Text style={styles.rowText}>{row}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </ScrollMask>
+
+      <Text style={styles.label}>Horizontal</Text>
+      <ScrollMask color={theme.background} fadeSize={56} style={styles.horizontal}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.horizontalContent}
+        >
+          {tags.map((tag) => (
+            <View key={tag} style={styles.chip}>
+              <Text style={styles.chipText}>{tag}</Text>
             </View>
           ))}
         </ScrollView>
@@ -101,19 +132,49 @@ function createStyles(theme: Theme) {
       fontSize: 12,
       fontWeight: '600',
     },
+    label: {
+      color: theme.accent,
+      fontSize: 12,
+      fontWeight: '600',
+      marginBottom: 8,
+    },
     vertical: {
       flex: 1,
+      marginBottom: 28,
+    },
+    verticalContent: {
+      gap: 10,
+      paddingVertical: 4,
     },
     row: {
       backgroundColor: theme.card,
       borderRadius: 14,
       paddingVertical: 18,
       paddingHorizontal: 18,
-      marginBottom: 10,
     },
     rowText: {
       color: theme.text,
       fontSize: 16,
+      fontWeight: '500',
+    },
+    horizontal: {
+      height: 56,
+      marginBottom: 40,
+    },
+    horizontalContent: {
+      gap: 10,
+      alignItems: 'center',
+    },
+    chip: {
+      backgroundColor: theme.card,
+      borderRadius: 999,
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      justifyContent: 'center',
+    },
+    chipText: {
+      color: theme.text,
+      fontSize: 14,
       fontWeight: '500',
     },
   });
