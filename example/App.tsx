@@ -121,7 +121,8 @@ function createStyles(theme: Theme) {
       flexDirection: 'row',
       alignItems: 'flex-start',
       justifyContent: 'space-between',
-      marginBottom: 24,
+      paddingTop: 24,
+      paddingBottom: 32,
     },
     headerText: {
       flex: 1,
@@ -150,6 +151,8 @@ function createStyles(theme: Theme) {
       color: theme.accent,
       fontSize: 12,
       fontWeight: '600',
+      letterSpacing: 1,
+      textTransform: 'uppercase',
       marginBottom: 8,
     },
     vertical: {
