@@ -1,5 +1,10 @@
+import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+} from 'react-native-safe-area-context';
 import { ScrollMask } from 'react-native-scroll-mask';
 
 const themes = {
@@ -10,6 +15,7 @@ const themes = {
     subtitle: '#8a8a99',
     accent: '#6c7bff',
     text: '#ededf2',
+    statusBar: 'light' as const,
   },
   light: {
     background: '#f3f3f7',
@@ -18,6 +24,7 @@ const themes = {
     subtitle: '#6b6b76',
     accent: '#4854d8',
     text: '#1a1a22',
+    statusBar: 'dark' as const,
   },
 };
 
@@ -43,55 +50,63 @@ export default function App() {
   const styles = createStyles(theme);
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.header}>
-        <View style={styles.headerText}>
-          <Text style={styles.title}>react-native-scroll-mask</Text>
-          <Text style={styles.subtitle}>
-            Edges fade based on scroll position
-          </Text>
-        </View>
-        <View style={styles.toggle}>
-          <Text style={styles.toggleLabel}>{isDark ? 'Dark' : 'Light'}</Text>
-          <Switch
-            value={isDark}
-            onValueChange={setIsDark}
-            trackColor={{ false: '#c9c9d2', true: theme.accent }}
-            thumbColor="#ffffff"
-            ios_backgroundColor="#c9c9d2"
-          />
-        </View>
-      </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.screen}>
+        <StatusBar style={theme.statusBar} />
 
-      <Text style={styles.label}>Vertical</Text>
-      <ScrollMask color={theme.background} style={styles.vertical}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.verticalContent}
-        >
-          {rows.map((row) => (
-            <View key={row} style={styles.row}>
-              <Text style={styles.rowText}>{row}</Text>
-            </View>
-          ))}
-        </ScrollView>
-      </ScrollMask>
+        <View style={styles.header}>
+          <View style={styles.headerText}>
+            <Text style={styles.title}>react-native-scroll-mask</Text>
+            <Text style={styles.subtitle}>
+              Edges fade based on scroll position
+            </Text>
+          </View>
+          <View style={styles.toggle}>
+            <Text style={styles.toggleLabel}>{isDark ? 'Dark' : 'Light'}</Text>
+            <Switch
+              value={isDark}
+              onValueChange={setIsDark}
+              trackColor={{ false: '#c9c9d2', true: theme.accent }}
+              thumbColor="#ffffff"
+              ios_backgroundColor="#c9c9d2"
+            />
+          </View>
+        </View>
 
-      <Text style={styles.label}>Horizontal</Text>
-      <ScrollMask color={theme.background} fadeSize={56} style={styles.horizontal}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.horizontalContent}
+        <Text style={styles.label}>Vertical</Text>
+        <ScrollMask color={theme.background} style={styles.vertical}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.verticalContent}
+          >
+            {rows.map((row) => (
+              <View key={row} style={styles.row}>
+                <Text style={styles.rowText}>{row}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </ScrollMask>
+
+        <Text style={styles.label}>Horizontal</Text>
+        <ScrollMask
+          color={theme.background}
+          fadeSize={56}
+          style={styles.horizontal}
         >
-          {tags.map((tag) => (
-            <View key={tag} style={styles.chip}>
-              <Text style={styles.chipText}>{tag}</Text>
-            </View>
-          ))}
-        </ScrollView>
-      </ScrollMask>
-    </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalContent}
+          >
+            {tags.map((tag) => (
+              <View key={tag} style={styles.chip}>
+                <Text style={styles.chipText}>{tag}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </ScrollMask>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -101,7 +116,6 @@ function createStyles(theme: Theme) {
       flex: 1,
       backgroundColor: theme.background,
       paddingHorizontal: 20,
-      paddingTop: 80,
     },
     header: {
       flexDirection: 'row',
