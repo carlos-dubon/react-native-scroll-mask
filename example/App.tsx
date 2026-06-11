@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import {
   SafeAreaProvider,
@@ -47,7 +47,7 @@ const tags = [
 export default function App() {
   const [isDark, setIsDark] = useState(true);
   const theme = isDark ? themes.dark : themes.light;
-  const styles = createStyles(theme);
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
     <SafeAreaProvider>
