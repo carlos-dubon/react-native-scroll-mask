@@ -1,7 +1,7 @@
 {
   "name": "react-native-scroll-mask",
-  "version": "0.1.0",
-  "description": "Fade the edges of any scrollable in React Native based on scroll position.",
+  "version": "1.0.0",
+  "description": "Fade the edges of any scrollable in React Native based on scroll position. Works on iOS and Android, powered by Reanimated and SVG.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -26,10 +26,33 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
-    "example": "pnpm --filter example start"
+    "example": "pnpm --filter example start",
+    "prepublishOnly": "pnpm build"
   },
+  "keywords": [
+    "react-native",
+    "scroll",
+    "mask",
+    "fade",
+    "fade-edges",
+    "gradient",
+    "scrollview",
+    "flatlist",
+    "reanimated",
+    "expo",
+    "ios",
+    "android"
+  ],
   "author": "carlos-dubon",
   "license": "MIT",
+  "homepage": "https://github.com/carlos-dubon/react-native-scroll-mask#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlos-dubon/react-native-scroll-mask.git"
+  },
+  "bugs": {
+    "url": "https://github.com/carlos-dubon/react-native-scroll-mask/issues"
+  },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.72.0",
