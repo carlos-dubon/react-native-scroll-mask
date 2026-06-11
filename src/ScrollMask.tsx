@@ -106,6 +106,7 @@ export function ScrollMask({
 
   const scrollable = cloneElement(children, {
     onScroll: handleScroll,
+    scrollEventThrottle: 16,
     onContentSizeChange: handleContentSizeChange,
   } as Partial<ScrollableProps>);
 
