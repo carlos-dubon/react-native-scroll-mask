@@ -1,6 +1,6 @@
 {
   "name": "react-native-scroll-mask",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fade the edges of any scrollable in React Native based on scroll position. Works on iOS and Android, powered by Reanimated and SVG.",
   "type": "module",
   "main": "./dist/index.cjs",
