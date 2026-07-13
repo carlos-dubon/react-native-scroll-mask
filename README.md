@@ -7,9 +7,9 @@ Fades the edges of a scroll view so people get a hint there's more to see. The t
 
 I put this together after running into [twilson.net/scroll-mask](https://twilson.net/scroll-mask) and wanting the same effect in React Native. It's built on [Reanimated](https://docs.swmansion.com/react-native-reanimated/) and [react-native-svg](https://github.com/software-mansion/react-native-svg), and I've been using it on both iOS and Android.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/carlos-dubon/react-native-scroll-mask/main/screenshots/light.png" width="300" alt="Scroll mask in light mode — the fade adapts to the background color" />
-</p>
+https://github.com/user-attachments/assets/7aa00f2a-c194-4679-9d03-b4adabb0833f
+
+<img src="https://raw.githubusercontent.com/carlos-dubon/react-native-scroll-mask/main/screenshots/light.png" width="300" alt="Scroll mask" />
 
 The fade is just your background `color` painted over the edge, so it picks up whatever theme you're on.
 
@@ -117,10 +117,10 @@ Since it's just a tint of `color`, it wants a solid background underneath. If yo
 There's a runnable Expo app in [`example/`](./example):
 
 ```sh
-pnpm install
-pnpm build
+npm install
+npm build
 cd example
-pnpm ios   # or pnpm android
+npm ios   # or npm android
 ```
 
 ## License
