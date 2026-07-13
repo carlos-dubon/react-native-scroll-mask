@@ -3,70 +3,50 @@
 [![npm version](https://img.shields.io/npm/v/react-native-scroll-mask.svg)](https://www.npmjs.com/package/react-native-scroll-mask)
 [![license](https://img.shields.io/npm/l/react-native-scroll-mask.svg)](./LICENSE)
 
-Fade the edges of any scrollable in React Native based on scroll position. The fade appears only where there is more content to scroll — the top edge fades in once you scroll down, the bottom edge fades out as you reach the end — so users always get a subtle hint that there is more to see.
+Fades the edges of a scroll view so people get a hint there's more to see. The top edge only shows up once you've scrolled down a bit, and the bottom fades away as you reach the end.
 
-Inspired by [twilson.net/scroll-mask](https://twilson.net/scroll-mask), built for React Native with [Reanimated](https://docs.swmansion.com/react-native-reanimated/) and [react-native-svg](https://github.com/software-mansion/react-native-svg). Works on **iOS** and **Android**.
+I put this together after running into [twilson.net/scroll-mask](https://twilson.net/scroll-mask) and wanting the same effect in React Native. It's built on [Reanimated](https://docs.swmansion.com/react-native-reanimated/) and [react-native-svg](https://github.com/software-mansion/react-native-svg), and I've been using it on both iOS and Android.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/carlos-dubon/react-native-scroll-mask/main/screenshots/dark.png" width="300" alt="Scroll mask in dark mode — the bottom edge of the list fades out" />
-  &nbsp;&nbsp;
   <img src="https://raw.githubusercontent.com/carlos-dubon/react-native-scroll-mask/main/screenshots/light.png" width="300" alt="Scroll mask in light mode — the fade adapts to the background color" />
 </p>
 
-https://github.com/user-attachments/assets/e42ced86-6340-40d0-be3f-9b292f0588cd
+The fade is just your background `color` painted over the edge, so it picks up whatever theme you're on.
 
-<p align="center">
-  <em>The fade follows the background <code>color</code>, so it adapts to any theme. Try the toggle in the <a href="./example">example app</a>.</em>
-</p>
-
-## Features
-
-- Wrap any scrollable — `ScrollView`, `FlatList`, `SectionList`, `Animated.ScrollView`, etc.
-- Vertical and horizontal support (auto-detected from the child's `horizontal` prop).
-- Smooth, gesture-driven fades that run on the UI thread via Reanimated.
-- Fully typed, tiny, and dependency-light (only Reanimated + SVG, which you most likely already use).
-- Your own `onScroll` / `onContentSizeChange` handlers keep working.
-
-## Installation
+## Install
 
 ```sh
-pnpm add react-native-scroll-mask
-# or: npm install react-native-scroll-mask
-# or: yarn add react-native-scroll-mask
+npm i react-native-scroll-mask
 ```
 
-### Peer dependencies
-
-This package relies on Reanimated and SVG. If you don't have them yet:
+It leans on Reanimated and SVG. If you don't already have those:
 
 ```sh
 # Expo
 npx expo install react-native-reanimated react-native-svg
 
-# Bare React Native
-pnpm add react-native-reanimated react-native-svg
+# bare React Native
+npm install react-native-reanimated react-native-svg
 ```
 
-Make sure Reanimated is set up in your Babel config. With Expo (SDK 53+) `babel-preset-expo` configures it automatically. For a bare project, add the worklets plugin to `babel.config.js`:
+Reanimated needs its Babel plugin to be set up. On Expo (SDK 53+) `babel-preset-expo` takes care of it. On a bare project, add the worklets plugin to `babel.config.js` — it has to be last:
 
 ```js
 module.exports = {
-  presets: ['module:@react-native/babel-preset'],
-  plugins: ['react-native-worklets/plugin'], // must be listed last
+  presets: ["module:@react-native/babel-preset"],
+  plugins: ["react-native-worklets/plugin"],
 };
 ```
 
-## Usage
+## Using it
 
-Wrap a scrollable in `ScrollMask` and pass the `color` that sits behind it (usually your screen's background). The mask fades content into that color at the edges.
-
-### Vertical `ScrollView`
+Wrap a scrollable and pass the `color` sitting behind it — usually your screen background. That's what the edges fade into.
 
 ```tsx
-import { ScrollView, View, Text } from 'react-native';
-import { ScrollMask } from 'react-native-scroll-mask';
+import { ScrollView, View, Text } from "react-native";
+import { ScrollMask } from "react-native-scroll-mask";
 
-const BACKGROUND = '#0b0b0f';
+const BACKGROUND = "#0b0b0f";
 
 export function List() {
   return (
@@ -83,9 +63,7 @@ export function List() {
 }
 ```
 
-### Horizontal scroll
-
-`horizontal` is inferred from the child, so a horizontal `ScrollView` just works:
+Horizontal works the same way. It reads the `horizontal` prop off the child, so you don't have to say it twice:
 
 ```tsx
 <ScrollMask color={BACKGROUND} fadeSize={56} style={{ height: 56 }}>
@@ -97,11 +75,11 @@ export function List() {
 </ScrollMask>
 ```
 
-### `FlatList`
+`FlatList`, `SectionList`, `Animated.ScrollView` — anything that scrolls and fires `onScroll` is fine:
 
 ```tsx
-import { FlatList } from 'react-native';
-import { ScrollMask } from 'react-native-scroll-mask';
+import { FlatList } from "react-native";
+import { ScrollMask } from "react-native-scroll-mask";
 
 <ScrollMask color={BACKGROUND} style={{ flex: 1 }}>
   <FlatList
@@ -112,36 +90,37 @@ import { ScrollMask } from 'react-native-scroll-mask';
 </ScrollMask>;
 ```
 
+Your own `onScroll` and `onContentSizeChange` keep firing — it wraps them, it doesn't take them over.
+
 ## Props
 
-| Prop           | Type                     | Default      | Description                                                                                  |
-| -------------- | ------------------------ | ------------ | -------------------------------------------------------------------------------------------- |
-| `children`     | `ReactElement`           | **required** | A single scrollable element (`ScrollView`, `FlatList`, …).                                    |
-| `color`        | `string`                 | **required** | The background color behind the scrollable. The edges fade into this color.                  |
-| `horizontal`   | `boolean`                | child's prop | Direction of the fade. Defaults to the child's `horizontal` prop, falling back to `false`.   |
-| `fadeSize`     | `number`                 | `40`         | Length (in px) of each faded edge.                                                           |
-| `fadeDistance` | `number`                 | `24`         | Scroll distance (in px) over which a fade animates from fully hidden to fully shown.         |
-| `style`        | `StyleProp<ViewStyle>`   | —            | Style for the wrapper `View`. Use this for sizing/layout (e.g. `flex: 1`).                    |
-| `resetKey`     | `unknown`                | —            | When this value changes, the internal scroll offset is reset to `0` (handy after data swaps). |
+`color` and a single scrollable child are the only things you have to pass.
+
+| Prop           | Type                   | Default      | What it does                                                               |
+| -------------- | ---------------------- | ------------ | -------------------------------------------------------------------------- |
+| `children`     | `ReactElement`         | **required** | One scrollable element (`ScrollView`, `FlatList`, …).                      |
+| `color`        | `string`               | **required** | The background behind the scrollable. Edges fade into this.                |
+| `horizontal`   | `boolean`              | child's prop | Fade direction. Falls back to the child's `horizontal`, then to `false`.   |
+| `fadeSize`     | `number`               | `40`         | How long each faded edge is, in px.                                        |
+| `fadeDistance` | `number`               | `24`         | How much you scroll (px) to take a fade from hidden to fully shown.        |
+| `style`        | `StyleProp<ViewStyle>` | —            | Style for the wrapper. This is where sizing goes (`flex: 1`, etc.).        |
+| `resetKey`     | `unknown`              | —            | Change it to snap the tracked scroll offset back to `0` after a data swap. |
 
 ## How it works
 
-`ScrollMask` wraps your scrollable in a relative container and overlays two non-interactive gradients — one at each edge — that blend from `color` to transparent. As you scroll, it reads `contentOffset`, `layoutMeasurement`, and `contentSize` on the UI thread and animates each gradient's opacity with Reanimated:
+Nothing fancy. It drops two SVG gradients over your scrollable, one per edge, each going from `color` to transparent. As you scroll it reads `contentOffset` / `layoutMeasurement` / `contentSize` on the UI thread and animates each gradient's opacity with Reanimated — the start edge fades in as you leave the top, the end edge fades out as you approach the bottom.
 
-- The **start** edge fades in as you scroll away from the beginning.
-- The **end** edge fades out as you approach the end.
+Since it's just a tint of `color`, it wants a solid background underneath. If your list sits over a photo or a busy gradient, set `color` to whatever's closest at the edge, or put the mask over a solid surface.
 
-Because the effect is an overlay tinted with `color`, it works over a solid background. If your scrollable sits on top of an image or a multi-color gradient, set `color` to the dominant edge color or place the mask over a solid surface.
+## Example
 
-## Example app
-
-A runnable Expo example lives in [`example/`](./example).
+There's a runnable Expo app in [`example/`](./example):
 
 ```sh
 pnpm install
-pnpm build          # build the library once
+pnpm build
 cd example
-pnpm ios            # or: pnpm android
+pnpm ios   # or pnpm android
 ```
 
 ## License
